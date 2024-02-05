@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" href="../styling/universal.css">
+    <link rel="stylesheet" href="../styling/viewInventory.css">
+  </head>
+
+  <body>
+    <main>
+        <div class="container">
+            <div class="full header">
+                <div class="menu">
+                    <button class="collapsible">Menu</button>
+                    <div class="content">
+                        <nav>
+                            <a href="../pages/index.html" title="Home">Home</a>
+                            <a href="../pages/viewInventory.html" title="Inventory">Inventory</a>
+                            <a href="../pages/callibration.html" title="Callibrate">Callibrate</a>
+                        </nav>
+                    </div>
+                </div>
+                <img src="../images/LRH_Logo.jpg" id="LRH" alt="Lakeland Regional Health Logo">
+            </div>
+
+            <div class="full">
+                <h1>Inventory Database</h1>
+                <button type="button" value="Update Inventory">
+                    <a href="../pages/updateInventory.html"><h2>Update Inventory</h2></a>
+                </button>
+            </div>
+
+            <div class="main">
+                <div id="mainL">
+                    <form>
+                        <label for="SKU">Search SKU</label><br>
+                        <input type="text" id="SKU" name="SKU"><br>
+
+                        <label for="SIN">Search Item Name</label><br>
+                        <input type="text" id="SIN" name="SIN"><br>
+
+                        <label for="storeroom">Storeroom</label><br>
+                        <select id="storeroom" name="storeroom" size="5">
+                            <option value="SR1">SR1</option>
+                            <option value="SR2">SR2</option>
+                            <option value="SR3">SR3</option>
+                            <option value="SR4">SR4</option>
+                            <option value="SR5">SR5</option>
+                            <option value="SR6">SR6</option>
+                            <option value="SR7">SR7</option>
+                            <option value="SR8">SR8</option>
+                            <option value="SR9">SR9</option>
+                            <option value="SR10">SR10</option>
+                        </select><br><br>
+
+                        <label for="shelf">Shelf</label><br>
+                        <select id="shelf" name="shelf" size="3" multiple>
+                            <option value="S1">S1</option>
+                            <option value="S2">S2</option>
+                            <option value="S3">S3</option>
+                            <option value="S4">S4</option>
+                            <option value="S5">S5</option>
+                        </select><br><br>
+                        <button type="submit" class="collapsible">Apply</button>
+                    </form>
+                </div>
+
+                <div id="mainR">
+                    <table>
+                        <tr>
+                            <th>SKU</th>
+                            <th>Name</th>
+                            <th>Weight</th>
+                            <th>Quantity</th>
+                            <th>Location</th>
+                        </tr>
+                        <tr>
+                            <td>Test</td>
+                            <td>Test</td>
+                            <td>Test</td>
+                            <td>Test</td>
+                            <td>Test</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+	<script>
+        var coll = document.getElementsByClassName("collapsible");
+        var i;
+
+        for (i = 0; i < coll.length; i++) {
+        coll[i].addEventListener("click", function() {
+            this.classList.toggle("active");
+            var content = this.nextElementSibling;
+            if (content.style.maxHeight){
+            content.style.maxHeight = null;
+            } else {
+            content.style.maxHeight = content.scrollHeight + "px";
+            } 
+        });
+        }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,18 @@
+button {
+    width: 50%;
+    height: 30%;
+    margin: auto;
+}
+
+.main {
+    display: flex;
+    float: left;
+}
+
+#top {
+    margin-bottom: 5%;
+}
+
+#bottom {
+    margin-top: 5%;
+}
