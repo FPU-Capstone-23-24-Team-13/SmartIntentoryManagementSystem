@@ -1,0 +1,83 @@
+.full button {
+    margin-bottom: 20px;
+}
+
+.full input {
+    margin-bottom: 20px;
+}
+
+.option {
+    width: 30%;
+    margin: auto;
+}
+
+img {
+    text-align: right;
+}
+
+table, th, td {
+    border: 2px solid;
+    height:fit-content;
+}
+
+h3 {
+    margin: 0px;
+}
+
+label {
+    height: fit-content;
+}
+
+.fullB {
+    display: flex;
+}
+
+.main {
+    display: flex;
+    float: left;
+}
+
+.collapsible {
+    background-color: #79B242;
+    color: white;
+    cursor: pointer;
+    padding: 18px;
+    width: 100%;
+    border: none;
+    text-align: center;
+    outline: none;
+}
+
+.menu .collapsible {
+    width: 15%;
+}
+  
+.active, .collapsible:hover {
+    background-color: #FFFFFF;
+    color: #79B242;
+}
+  
+.content {
+    padding: 0 18px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.2s ease-out;
+    background-color: #f1f1f1;
+    width: 15%;
+}
+
+.location {
+    margin-bottom: 5px;
+}
+
+#mainL {
+    width: 20%;
+}
+
+#mainR {
+    width: 80%;
+}
+
+.bg {
+    
+}
