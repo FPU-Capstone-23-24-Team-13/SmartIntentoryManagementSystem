@@ -387,6 +387,7 @@ button,
 [type=reset],
 [type=submit] {
   -webkit-appearance: button;
+  width: 15rem;
 }
 button:not(:disabled),
 [type=button]:not(:disabled),
@@ -10971,7 +10972,34 @@ header.masthead2 .masthead-heading2 {
   }
 }
 
+.filterformcontainer {
+  padding: 2rem;
+}
 
+#contactForm{
+  border: 2px solid #ced4da;
+  border-radius: 5px;
+  padding: .5rem;
+}
+
+.form-group{
+  padding: .5rem;
+}
+
+#mainR {
+  width: 96.6%;
+  margin: auto;
+}
+
+table, th, td {
+  border: 2px solid #ced4da;
+  border-radius: 5px;
+  height:fit-content;
+}
+
+.center {
+  margin: auto;
+}
 
 .footer {
   text-align: center;
