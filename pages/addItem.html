@@ -45,47 +45,78 @@
 <!-- Masthead (LRH Photo and Slogan)-->
 <header class="masthead2">
     <div class="container">
-        <div class="masthead-heading2 text-uppercase">Update Inventory</div>
+        <div class="masthead-heading2 text-uppercase">Add Item</div>
     </div>
 </header>
 
 <section class="page-section" id="services">
     <div class="container">
 
-         <!-- Title and Subtitle-->
-        <div class="text-center">
-            <h2 class="section-heading text-uppercase">Select Item Type</h2>
-        </div>
 
 
-     <!-- Webpage Services-->
-  <section class="page-section" id="services">
-    <div class="container">
-        <!-- 2 Buttons and an Image in a Row-->
-        <div class="row text-center">
-            <div class="col-md-4">
-                <span class="fa-stack fa-4x">
-                    <i class="fas fa-circle fa-stack-2x text-primary"></i>
-                    <i class="fas fa-arrow-up fa-stack-1x fa-inverse"></i>
-                </span>
-                <div class="text-center"><button class="btn btn-secondary btn-sm text-uppercase" id="submitButton" type="submit"><a href="../pages/updateItem.html">Update Item</a></button></div>
+ <!-- Title and Subtitle-->
+ <div class="text-center">
+    <h2 class="section-heading text-uppercase">Enter Item Information</h2>
+</div>
+
+<!-- Form -->
+<div class="filterformcontainer" class="center">
+    <form id="contactForm">
+        <div class="row align-items-stretch mb-5">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <!-- Search SKU input-->
+                    <input class="form-control" id="SKU" type="text" placeholder="SKU Number" />
+                </div>
+                <div class="form-group">
+                    <!-- Search Item Name-->
+                    <input class="form-control" id="SIN" type="text" placeholder="Item Name"/>
+                </div>
+                <div class="form-group">
+                    <!-- Search Quantity Name-->
+                    <input class="form-control" id="QTY" type="number" placeholder="Quantity"/>
+                </div>
+                <div class="form-group">
+                    <!-- Search Reorder Threshold-->
+                    <input class="form-control" id="reorderThreshold" type="number" placeholder="Reorder Threshold"/>
+                </div>
+                <div class="form-group">
+                    <!-- Insert Images-->
+                    <input class="form-control" id="itemImage" type="file" placeholder="Select an Image"/>
+                </div>
             </div>
-            <div class="col-md-4">
-                <img src="../images/LRH4.png" alt="LRH Building">
+            <div class="col-md-6">
+                <div class="form-group form-group-textarea mb-md-0">
+                    <!-- Storeroom-->
+                    <label for="storeroom">Select Storeroom...</label>
+                    <select class="form-control" id="storeroom" placeholder="Storeroom" size="5">
+                        <option value="SR1">SR1</option>
+                            <option value="SR2">SR2</option>
+                            <option value="SR3">SR3</option>
+                            <option value="SR4">SR4</option>
+                            <option value="SR5">SR5</option>
+                            <option value="SR6">SR6</option>
+                            <option value="SR7">SR7</option>
+                            <option value="SR8">SR8</option>
+                            <option value="SR9">SR9</option>
+                            <option value="SR10">SR10</option>
+                        </select>
+                        <div class="form-group mb-md-0">
+                            <!-- Shelf-->
+                            <select class="form-control" id="selectShelf" type="multiple" placeholder="Select Shelf..." />
+                                <option value="Shelf">Select Shelf...</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                            </select>
+                        </div>
+                </div>
             </div>
-
-            <div class="col-md-4">
-                <span class="fa-stack fa-4x">
-                    <i class="fas fa-circle fa-stack-2x text-primary"></i>
-                    <i class="fas fa-plus fa-stack-1x fa-inverse"></i>
-                </span>
-                 <div class="text-center"><button class="btn btn-secondary btn-sm text-uppercase" id="submitButton" type="submit"><a href="../pages/addItem.html">Add Item</a></button></div>
-        </div>
-    </div>
-</section>
-
-
-
+        </div> 
+        <input type="submit" value="Submit">
+        <input type="reset" value="Reset">   
+    </form>
 
                 
 
