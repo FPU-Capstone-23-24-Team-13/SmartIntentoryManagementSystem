@@ -73,3 +73,8 @@ label {
 #mainR {
     width: 80%;
 }
+
+.col-md-4{
+    justify-content: center;
+    align-content: center;
+}
