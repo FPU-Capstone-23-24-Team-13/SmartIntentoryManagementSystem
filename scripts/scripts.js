@@ -8,7 +8,6 @@
 // 
 
 window.addEventListener('DOMContentLoaded', event => {
-
     // Navbar shrink function
     var navbarShrink = function () {
         const navbarCollapsible = document.body.querySelector('#mainNav');
@@ -52,3 +51,52 @@ window.addEventListener('DOMContentLoaded', event => {
     });
 
 });
+
+function fetchLocationsAndPopulateDropdowns() {
+    fetch('/api/location/')
+        .then(response => response.json())
+        .then(locations => {
+            const storeroomSelect = document.getElementById('storeroom');
+            const uniqueStorerooms = [...new Set(locations.map(location => location.storeroom_name))];
+
+            uniqueStorerooms.forEach(storeroomName => {
+                const option = new Option(storeroomName, storeroomName);
+                storeroomSelect.add(option);
+            });
+
+            // Listen for changes on the storeroom select to update shelves
+            storeroomSelect.addEventListener('change', function() {
+                const selectedStoreroom = this.value;
+                const shelvesForStoreroom = locations.filter(location => location.storeroom_name === selectedStoreroom)
+                                                      .map(location => location.shelf_name);
+                const uniqueShelves = [...new Set(shelvesForStoreroom)]; // Ensure shelves are unique
+
+                const shelfSelect = document.getElementById('selectShelf');
+                shelfSelect.innerHTML = ''; // Clear existing options
+                uniqueShelves.forEach(shelfName => {
+                    const option = new Option(shelfName, shelfName);
+                    shelfSelect.add(option);
+                });
+            });
+        })
+        .catch(error => console.error('Error fetching locations:', error));
+}
+function checkItemExists(sku) {
+    return fetch('/api/item/' + sku)
+        .then(response => response.json())
+        .then(data => {
+            if (Object.keys(data).length === 2) {
+                // Empty object, item does not exist
+                console.error('Item does not yet exist');
+                return -1; // Return null to indicate failure
+            } else {
+                // Valid JSON object, item exists
+                console.log('Item found:', data);
+                return 0; // Return 'continue' to indicate success
+            }
+        })
+        .catch(error => {
+            console.error('Error checking item existence:', error);
+            return -1; // Return null to indicate failure
+        });
+    }

@@ -57,20 +57,17 @@
             <div class="col-md-6">
                 <div class="form-group">
                     <!-- Search SKU input-->
-                    <input class="form-control" id="SKU" type="text" placeholder="Search SKU" />
+                    <input class="form-control" id="SKU" type="text" placeholder="Search SKU" name="SKU" />
                 </div>
                 <div class="form-group">
                     <!-- Search Item Name-->
-                    <input class="form-control" id="SIN" type="text" placeholder="Search Item Name"/>
+                    <input class="form-control" id="SIN" type="text" placeholder="Search Item Name" name="SIN />
                 </div>
                 <div class="form-group mb-md-0">
                     <!-- Storeroom-->
-                    <select class="form-control" id="selectShelf" type="multiple" placeholder="Select Shelf..." />
-                        <option value="Shelf">Select Shelf...</option>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
+                    <label for="selectShelf">Select Shelf...</label>
+                    <select class="form-control" id="selectShelf" name="selectShelf">
+                        <!-- Options will be populated dynamically using JavaScript -->
                     </select>
                 </div>
             </div>
@@ -78,18 +75,9 @@
                 <div class="form-group form-group-textarea mb-md-0">
                     <!-- Storeroom-->
                     <label for="storeroom">Select Storeroom...</label>
-                    <select class="form-control" id="storeroom" placeholder="Storeroom" size="5">
-                        <option value="SR1">SR1</option>
-                            <option value="SR2">SR2</option>
-                            <option value="SR3">SR3</option>
-                            <option value="SR4">SR4</option>
-                            <option value="SR5">SR5</option>
-                            <option value="SR6">SR6</option>
-                            <option value="SR7">SR7</option>
-                            <option value="SR8">SR8</option>
-                            <option value="SR9">SR9</option>
-                            <option value="SR10">SR10</option>
-                        </select>
+                    <select class="form-control" id="storeroom" placeholder="Storeroom" size="5" name="storeroom">
+                        <!-- Options will be populated dynamically using JavaScript -->
+                    </select>
                 </div>
             </div>
         </div> 
@@ -108,63 +96,17 @@
                             <th>Reorder Threshold</th>
                             <th>Location</th>
                         </tr>
-                        <tr>
-                            <td>Test</td>
-                            <td>Test</td>
-                            <td>Test</td>
-                            <td>Test</td>
-                            <td>Test</td>
-                        </tr>
+                        <tr id="dataRow">
+							<td id="skuCell">null</td>
+							<td id="nameCell">null</td>
+							<td id="quantityCell">null</td>
+							<td id="thresholdCell">null</td>
+							<td id="locationCell">null</td>
+						</tr>
                     </table>
                 </div>
 
     </main>
-
-    <!-- Melia Old Form + weird div container
-        <div class="container">
-            <div class="main">
-                <div id="mainL">
-                    <form>
-                        <label for="SKU">Search SKU</label><br>
-                        <input type="text" id="SKU" name="SKU"><br>
-
-                        <label for="SIN">Search Item Name</label><br>
-                        <input type="text" id="SIN" name="SIN"><br>
-
-                        <label for="storeroom">Storeroom</label><br>
-                        <select id="storeroom" name="storeroom" size="5">
-                            <option value="SR1">SR1</option>
-                            <option value="SR2">SR2</option>
-                            <option value="SR3">SR3</option>
-                            <option value="SR4">SR4</option>
-                            <option value="SR5">SR5</option>
-                            <option value="SR6">SR6</option>
-                            <option value="SR7">SR7</option>
-                            <option value="SR8">SR8</option>
-                            <option value="SR9">SR9</option>
-                            <option value="SR10">SR10</option>
-                        </select><br><br>
-
-                        <label for="shelf">Shelf</label><br>
-                        <select id="shelf" name="shelf" size="3" multiple>
-                            <option value="S1">S1</option>
-                            <option value="S2">S2</option>
-                            <option value="S3">S3</option>
-                            <option value="S4">S4</option>
-                            <option value="S5">S5</option>
-                        </select><br><br>
-                        <button type="submit" class="collapsible">Apply</button>
-                    </form>
-                </div>
-             </div>
-            </div>
-
-        <div class="container">
-        <div class="viewInventorySearch">
-        </div>
-    </div>
-
--->
 
     <!-- Bootstrap core JS-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -172,7 +114,91 @@
     <!-- Core theme JS-->
     <script src="../scripts/scripts.js"></script>
     <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
+	<script>
+	document.addEventListener('DOMContentLoaded', function() {
+	    fetchLocationsAndPopulateDropdowns();
+        const form = document.getElementById('contactForm');
+        form.addEventListener('submit', function(event) {
+            handleFormSubmit(event, form);
+        });
+    });
+	function handleFormSubmit(event, form) {
+      event.preventDefault(); // Prevent default form submission
 
+      const formData = new FormData(form); // Create FormData object from form data
+      const sku = formData.get('SKU');
+      const name = formData.get('SIN');
+      const storeroomName = formData.get('storeroom');
+      const shelfName = formData.get('selectShelf'); 
+
+      submitFormData(sku)
+	  
+      .then(result => {
+          if (Object.keys(result).length == 0) {
+			document.getElementById('skuCell').textContent = 'null';
+			  document.getElementById('nameCell').textContent = 'null';
+			  document.getElementById('quantityCell').textContent = 'null';
+			  document.getElementById('thresholdCell').textContent = 'null';
+			  document.getElementById('locationCell').textContent = 'null';
+              // Item does not exist
+              const failureMessage = document.createElement('div');
+              failureMessage.textContent = 'No item found';
+              failureMessage.style.color = 'red';
+              failureMessage.style.fontWeight = 'bold';
+              failureMessage.style.marginBottom = '10px';
+              document.getElementById('contactForm').prepend(failureMessage);
+
+              // Remove the failure message after 5 seconds
+              setTimeout(() => {
+                  failureMessage.remove();
+              }, 5000);
+          } else {
+			  document.getElementById('skuCell').textContent = result.sku;
+			  document.getElementById('nameCell').textContent = result.name;
+			  document.getElementById('quantityCell').textContent = result.count;
+			  document.getElementById('thresholdCell').textContent = result.reorder_threshold;
+			  document.getElementById('locationCell').textContent = result.location || 'null';
+
+			  // Display a success message
+			  const successMessage = document.createElement('div');
+			  successMessage.textContent = 'Item successfully found!';
+			  successMessage.style.color = 'green';
+			  successMessage.style.fontWeight = 'bold';
+			  successMessage.style.marginBottom = '10px';
+			  document.getElementById('contactForm').prepend(successMessage);
+			  
+			  // Remove the failure message after 5 seconds
+              setTimeout(() => {
+                  successMessage.remove();
+              }, 5000);
+          }
+      });
+    }
+
+    function submitFormData(sku) {
+	console.log(sku)
+    return fetch('/api/item/' + sku)
+        .then(response => response.json())
+        .then(data => {
+		    console.log(data)
+            if (Object.keys(data).length === 2) {
+                // Empty object, item does not exist
+                console.error('Item does not yet exist');
+                return {}; // Return null to indicate failure
+            } else {
+                // Valid JSON object, item exists
+                console.log('Item found:', data);
+                return data; // Return 'continue' to indicate success
+            }
+        })
+        .catch(error => {
+            console.error('Error checking item existence:', error);
+            return -1; // Return null to indicate failure
+        });
+    }
+    
+    </script>
+	
       <!-- Melia JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 	<script>

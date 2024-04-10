@@ -1,208 +1,216 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-        <meta name="description" content="" />
-        <meta name="author" content="" />
-        <title>LRH Inventory Management System</title>
-        <!-- Favicon-->
-        <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
-        <!-- Font Awesome icons (free version)-->
-        <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
-        <!-- Google fonts-->
-        <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
-        <link href="https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700" rel="stylesheet" type="text/css" />
-        <!-- Core theme CSS (includes Bootstrap)-->
-        <link href="../styling/styles.css" rel="stylesheet" />
-        <link rel="stylesheet" href="../styling/universal.css">
-        <link rel="stylesheet" href="../styling/updateInventory.css">
-    </head>
-
-  <body>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>LRH Inventory Management System</title>
+    <!-- Favicon-->
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+    <!-- Font Awesome icons (free version)-->
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    <!-- Google fonts-->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700" rel="stylesheet" type="text/css" />
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link href="../styling/styles.css" rel="stylesheet" />
+    <link rel="stylesheet" href="../styling/universal.css">
+    <link rel="stylesheet" href="../styling/updateInventory.css">
+</head>
+<body>
     <main>
         <!-- Navigation-->
-    <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav">
-        <div class="container">
-            <a class="navbar-brand" href="#page-top"><img src="../images/LRHPG_logo_W.png" alt="..." /></a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-                Menu
-                <i class="fas fa-bars ms-1"></i>
-            </button>
-        <div class="collapse navbar-collapse" id="navbarResponsive">
-            <ul class="navbar-nav text-uppercase ms-auto py-4 py-lg-0">
-                <li class="nav-item"><a class="nav-link" href="../pages/index.html">Home</a></li>
-                <li class="nav-item"><a class="nav-link" href="../pages/viewInventory.html">View Inventory</a></li>
-                <li class="nav-item"><a class="nav-link" href="../pages/updateInventory.html">Update Inventory</a></li>
-                <li class="nav-item"><a class="nav-link" href="../pages/calibration.html">Calibrate</a></li>
-            </ul>
-        </div>
-    </div>
-</nav>
-
-
-
-<!-- Masthead (LRH Photo and Slogan)-->
-<header class="masthead2">
-    <div class="container">
-        <div class="masthead-heading2 text-uppercase">Update Item</div>
-    </div>
-</header>
-
-<section class="page-section" id="services">
-    <div class="container">
-
-
-
- <!-- Title and Subtitle-->
- <div class="text-center">
-    <h2 class="section-heading text-uppercase">Enter Item Information</h2>
-</div>
-
-<!-- Form -->
-<div class="filterformcontainer" class="center">
-    <form id="contactForm">
-        <div class="row align-items-stretch mb-5">
-            <div class="col-md-6">
-                <div class="form-group">
-                    <!-- Search SKU input-->
-                    <input class="form-control" id="SKU" type="text" placeholder="SKU Number" />
-                </div>
-                <div class="form-group">
-                    <!-- Search Item Name-->
-                    <input class="form-control" id="SIN" type="text" placeholder="Item Name"/>
-                </div>
-                <div class="form-group">
-                    <!-- Search Quantity Name-->
-                    <input class="form-control" id="QTY" type="number" placeholder="Quantity"/>
-                </div>
-                <div class="form-group">
-                    <!-- Search Reorder Threshold-->
-                    <input class="form-control" id="reorderThreshold" type="number" placeholder="Reorder Threshold"/>
-                </div>
-                <div class="form-group">
-                    <!-- Insert Images-->
-                    <input class="form-control" id="itemImage" type="file" placeholder="Select an Image"/>
+        <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav">
+            <div class="container">
+                <a class="navbar-brand" href="#page-top"><img src="../images/LRHPG_logo_W.png" alt="..." /></a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                    Menu
+                    <i class="fas fa-bars ms-1"></i>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav text-uppercase ms-auto py-4 py-lg-0">
+                        <li class="nav-item"><a class="nav-link" href="../pages/index.html">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="../pages/viewInventory.html">View Inventory</a></li>
+                        <li class="nav-item"><a class="nav-link" href="../pages/updateInventory.html">Update Inventory</a></li>
+                        <li class="nav-item"><a class="nav-link" href="../pages/calibration.html">Calibrate</a></li>
+                    </ul>
                 </div>
             </div>
-            <div class="col-md-6">
-                <div class="form-group form-group-textarea mb-md-0">
-                    <!-- Storeroom-->
-                    <label for="storeroom">Select Storeroom...</label>
-                    <select class="form-control" id="storeroom" placeholder="Storeroom" size="5">
-                        <option value="SR1">SR1</option>
-                            <option value="SR2">SR2</option>
-                            <option value="SR3">SR3</option>
-                            <option value="SR4">SR4</option>
-                            <option value="SR5">SR5</option>
-                            <option value="SR6">SR6</option>
-                            <option value="SR7">SR7</option>
-                            <option value="SR8">SR8</option>
-                            <option value="SR9">SR9</option>
-                            <option value="SR10">SR10</option>
-                        </select>
-                        <div class="form-group mb-md-0">
-                            <!-- Shelf-->
-                            <select class="form-control" id="selectShelf" type="multiple" placeholder="Select Shelf..." />
-                                <option value="Shelf">Select Shelf...</option>
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                                <option value="4">4</option>
-                            </select>
+        </nav>
+
+        <!-- Masthead (LRH Photo and Slogan)-->
+        <header class="masthead2">
+            <div class="container">
+                <div class="masthead-heading2 text-uppercase">Update Item</div>
+            </div>
+        </header>
+
+        <section class="page-section" id="services">
+            <div class="container">
+                <!-- Title and Subtitle-->
+                <div class="text-center">
+                    <h2 class="section-heading text-uppercase">Enter Item Information</h2>
+                </div>
+
+                <!-- Form -->
+                <div class="filterformcontainer center">
+                    <form id="contactForm">
+                        <div class="row align-items-stretch mb-5">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <!-- Search SKU input-->
+                                    <input class="form-control" id="SKU" type="text" placeholder="SKU Number" name="SKU" />
+                                </div>
+                                <div class="form-group">
+                                    <!-- Search Item Name-->
+                                    <input class="form-control" id="SIN" type="text" placeholder="Item Name" name="SIN"/>
+                                </div>
+                                <div class="form-group">
+                                    <!-- Search Quantity Name-->
+                                    <input class="form-control" id="QTY" type="number" placeholder="Quantity" name="QTY"/>
+                                </div>
+                                <div class="form-group">
+                                    <!-- Search Reorder Threshold-->
+                                    <input class="form-control" id="reorderThreshold" type="number" placeholder="Reorder Threshold" name="reorderThreshold"/>
+                                </div>
+                                <div class="form-group">
+                                    <!-- Insert Images-->
+                                    <input class="form-control" id="itemImage" type="file" placeholder="Select an Image"/>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group form-group-textarea mb-md-0">
+                                    <!-- Storeroom-->
+                                    <label for="storeroom">Select Storeroom...</label>
+                                    <select class="form-control" id="storeroom" placeholder="Storeroom" size="5" name="storeroom">
+                                        <!-- Options will be populated dynamically using JavaScript -->
+                                    </select>
+                                </div>
+                                <div class="form-group mb-md-0">
+                                    <!-- Shelf-->
+                                    <label for="selectShelf">Select Shelf...</label>
+                                    <select class="form-control" id="selectShelf" name="selectShelf">
+                                        <!-- Options will be populated dynamically using JavaScript -->
+                                    </select>
+                                </div>
+                            </div>
                         </div>
+                        <input type="submit" value="Submit">
+                        <input type="reset" value="Reset">
+                    </form>
                 </div>
             </div>
-        </div> 
-        <input type="submit" value="Submit">
-        <input type="reset" value="Reset">   
-    </form>
-
-                
-
-<!-- Melias Code
-
-            <div class="full">
-                <h1>Update Inventory Database</h1>
-                <div class="fullB">
-                    <button type="button" class="option" value="Update Item">
-                        <h2>Update Item</h2>
-                    </button>
-                    <button type="button" class="option" value="Add Item">
-                        <h2>Add Item</h2>
-                    </button>
-                </div>
-            </div>
-
-            <div class="main" id="add">
-                <form>
-                    <label for="SCU">SKU:</label><br>
-                    <input type="text" id="SCU" name="SCU"><br>
-
-                    <label for="Name">Name:</label><br>
-                    <input type="text" id="Name" name="Name"><br>
-
-                    <label for="Quantity">Quantity:</label><br>
-                    <input type="text" id="Quantity" name="Quantity"><br>
-
-                    <label for="Reorder Threshold">Reorder Threshold:</label><br>
-                    <input type="text" id="Reorder Threshold" name="Reorder Threshold"><br>
-
-                    <label for="Storeroom">Storeroom:</label><br>
-                    <select id="Storeroom" name="Storeroom">
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                    </select><br>
-
-                    <label for="Shelf">Shelf:</label><br>
-                    <select id="Shelf" name="Shelf">
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                    </select><br>
-
-                    <label for="image">Select an image:</label><br>
-                    <input type="file" id="image" name="image"><br>
-
-                    <input type="reset" value="Reset">
-                    <input type="submit" value="Submit"><br>
-                </form>
-            </div>
-        </div>
-
+        </section>
     </main>
 
-    -->
-
-  <!-- Bootstrap core JS-->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
- 
-  <!-- Core theme JS-->
-  <script src="../scripts/scripts.js"></script>
-  <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
-
-
-    <!-- Melia JS-->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-	<script>
-        var coll = document.getElementsByClassName("collapsible");
-        var i;
-
-        for (i = 0; i < coll.length; i++) {
-        coll[i].addEventListener("click", function() {
-            this.classList.toggle("active");
-            var content = this.nextElementSibling;
-            if (content.style.maxHeight){
-            content.style.maxHeight = null;
-            } else {
-            content.style.maxHeight = content.scrollHeight + "px";
-            } 
+    <!-- Bootstrap core JS-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Core theme JS-->
+    <script src="../scripts/scripts.js"></script>
+    <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+	    fetchLocationsAndPopulateDropdowns();
+        const form = document.getElementById('contactForm');
+        form.addEventListener('submit', function(event) {
+            handleFormSubmit(event, form);
         });
-        }
-    </script>
-  </body>
-</html>
+    });
 
+    function handleFormSubmit(event, form) {
+      event.preventDefault(); // Prevent default form submission
+
+      const formData = new FormData(form); // Create FormData object from form data
+
+      const sku = formData.get('SKU');
+      const name = formData.get('SIN');
+      const reorderThreshold = formData.get('reorderThreshold');
+      const count = formData.get('QTY');
+      const storeroomName = formData.get('storeroom');
+      const shelfName = formData.get('selectShelf'); // Assuming shelf is a single select
+
+      checkItemExists(sku)
+      .then(result => {
+          if (result === -1) {
+              // Item does not exist
+              const failureMessage = document.createElement('div');
+              failureMessage.textContent = 'Item could not be updated';
+              failureMessage.style.color = 'red';
+              failureMessage.style.fontWeight = 'bold';
+              failureMessage.style.marginBottom = '10px';
+              document.getElementById('contactForm').prepend(failureMessage);
+
+              // Remove the failure message after 5 seconds
+              setTimeout(() => {
+                  failureMessage.remove();
+              }, 5000);
+          } else {
+              // Check if the selected storeroom and shelf names match any location in the response
+              fetch('/api/location/')
+                  .then(response => response.json())
+                  .then(locations => {
+                      const location = locations.find(location => location.storeroom_name === storeroomName && location.shelf_name === shelfName);
+                      const location_id = location?.location_id ?? null;
+                      const data = {};
+
+                      // Add properties to the data object if they have a non-null value
+                      data.sku = sku;
+                      if (name !== '') data.name = name;
+                      if (reorderThreshold !== '') data.reorder_threshold = reorderThreshold;
+                      if (count !== '') data.count = count;
+                      if (location_id !== null) data.location_id = location_id;
+
+                      // Submit form data with location ID
+                      submitFormData(data);
+                  })
+                  .catch(error => {
+                      // Handle errors during location retrieval
+                      console.error('Error fetching locations:', error);
+                  });
+          }
+      });
+    }
+    function submitFormData(data) {
+        fetch('/api/item/' + data.sku, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Handle successful response (e.g., display confirmation message)
+            console.log('Item sent for creation:', data);
+            // Clear the form fields
+            document.getElementById('contactForm').reset();
+
+            // Display a success message
+            const successMessage = document.createElement('div');
+            successMessage.textContent = 'Item updated successfully!';
+            successMessage.style.color = 'green';
+            successMessage.style.fontWeight = 'bold';
+            successMessage.style.marginBottom = '10px';
+            document.getElementById('contactForm').prepend(successMessage);
+
+        // Remove the success message after 3 seconds
+        setTimeout(() => {
+            successMessage.remove();
+        }, 5000);
+        })
+        .catch(error => {
+            // Handle errors during submission (e.g., display error message)
+            console.error('Error creating item:', error.message);
+        });
+    }
+    </script>
+
+
+</body>
+</html>
