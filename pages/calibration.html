@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>LRH Inventory Management System</title>
+        <!-- Favicon-->
+        <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+        <!-- Font Awesome icons (free version)-->
+        <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+        <!-- Google fonts-->
+        <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
+        <link href="https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700" rel="stylesheet" type="text/css" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="../styling/styles.css" rel="stylesheet" />
+        <link rel="stylesheet" href="../styling/universal.css">
+        <link rel="stylesheet" href="../styling/calibration.css">
+    </head>
+
+  <body>
+    <main>
+        <!-- Navigation-->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav">
+        <div class="container">
+            <a class="navbar-brand" href="#page-top"><img src="../images/LRHPG_logo_W.png" alt="..." /></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                Menu
+                <i class="fas fa-bars ms-1"></i>
+            </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav text-uppercase ms-auto py-4 py-lg-0">
+                <li class="nav-item"><a class="nav-link" href="../pages/index.html">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="../pages/viewInventory.html">View Inventory</a></li>
+                <li class="nav-item"><a class="nav-link" href="../pages/updateInventory.html">Update Inventory</a></li>
+                <li class="nav-item"><a class="nav-link" href="../pages/calibration.html">Calibrate</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+
+
+<!-- Masthead (LRH Photo and Slogan)-->
+<header class="masthead2">
+    <div class="container">
+        <div class="masthead-heading2 text-uppercase">Calibration</div>
+    </div>
+</header>
+
+
+<section class="page-section" id="services">
+    <div class="container">
+        <!-- Title and Subtitle-->
+        <div class="text-center">
+            <h2 class="section-heading text-uppercase">Enter Calibration Information</h2>
+        </div>
+
+        <!-- Form -->
+        <div class="filterformcontainer center">
+            <form id="contactForm">
+                <div class="row align-items-stretch mb-5">
+                    <div class="col-md-6">
+                            <div class="form-group form-group-textarea mb-md-0">
+                                    <!-- Storeroom-->
+                                    <label for="storeroom">Select Storeroom...</label>
+                                    <select class="form-control" id="storeroom" placeholder="Storeroom" size="5" name="storeroom">
+                                        <!-- Options will be populated dynamically using JavaScript -->
+                                    </select>
+                            </div>
+                        <div class="form-group mb-md-0">
+                            <!-- Shelf-->
+                            <label for="selectShelf">Select Shelf...</label>
+                            <select class="form-control" id="selectShelf" name="selectShelf">
+                                <!-- Options will be populated dynamically using JavaScript -->
+                            </select>
+                        </div>
+                        <div class="form-group form-group-textarea mb-md-0">
+                            <!-- Sensor-->
+                            <label for="sensor">Select Sensor...</label>
+                            <select class="form-control" id="sensor" name="sensor">
+                                <!-- Options will be populated dynamically using JavaScript -->
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group form-group-textarea mb-md-0">
+                            <img src="../images/calibration-icon-design-free-vector.jpg">
+                        </div>
+                    </div>
+                </div>
+                <input type="submit" value="Submit">
+                <input type="reset" value="Reset">
+            </form>
+        </div>
+    </div>
+</section>
+</main>
+<!-- Bootstrap core JS-->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Core theme JS-->
+<!--<script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>-->
+<!-- Andrew autopopulate JS-->
+<script src="../scripts/scripts.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+fetchLocationsAndPopulateDropdowns();
+fetchSensors();
+const form = document.getElementById('contactForm');
+form.addEventListener('submit', function(event) {
+    handleFormSubmit(event, form);
+});
+});
+
+function handleFormSubmit(event, form) {
+event.preventDefault(); // Prevent default form submission
+const formData = new FormData(form); // Create FormData object from form data
+
+const sku = formData.get('SKU');
+const name = formData.get('SIN');
+const reorderThreshold = formData.get('reorderThreshold');
+const count = formData.get('QTY');
+const storeroomName = formData.get('storeroom');
+const shelfName = formData.get('selectShelf'); // Assuming shelf is a single select
+// Check if any fields are empty and log a warning if so
+if (!sku || !name || !reorderThreshold || !count || !storeroomName || !shelfName) {
+  console.warn('Please fill out all required fields.');
+  return;
+}
+console.log(sku)
+// Check if the selected storeroom and shelf names match any location in the response
+fetch('/api/location/')
+    .then(response => response.json())
+    .then(locations => {
+        const location = locations.find(location => location.storeroom_name === storeroomName && location.shelf_name === shelfName);
+
+        if (!location) {
+            console.error('Storeroom or shelf not found');
+            // Display an error message to the user indicating that the selected storeroom or shelf is not valid
+            return;
+        }
+
+        const location_id = location.location_id;
+        const data = {
+            sku: sku,
+            name: name,
+            description: "", // Assuming description is not captured in the form
+            reorder_threshold: reorderThreshold,
+            count: count,
+            location_id: location_id
+        };
+
+        // Submit form data with location ID
+        submitFormData(data);
+    })
+    .catch(error => {
+        // Handle errors during location retrieval
+        console.error('Error fetching locations:', error);
+    });
+}
+
+function submitFormData(data) {
+fetch('/api/item/' + data.sku, {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+})
+.then(response => {
+    if (!response.ok) {
+        throw new Error('Network response was not ok');
+    }
+    return response.json();
+})
+.then(data => {
+    // Handle successful response (e.g., display confirmation message)
+    console.log('Item sent for creation:', data);
+    // Clear the form fields
+    document.getElementById('contactForm').reset();
+
+    // Display a success message
+    const successMessage = document.createElement('div');
+    successMessage.textContent = 'Item created successfully!';
+    successMessage.style.color = 'green';
+    successMessage.style.fontWeight = 'bold';
+    successMessage.style.marginBottom = '10px';
+    document.getElementById('contactForm').prepend(successMessage);
+
+// Remove the success message after 3 seconds
+setTimeout(() => {
+    successMessage.remove();
+}, 5000);
+})
+.catch(error => {
+    // Handle errors during submission (e.g., display error message)
+    console.error('Error creating item:', error.message);
+});
+}
+function fetchSensors() {
+    console.log("fetch sensors called")
+    fetch('/api/sensor/')
+        .then(response => response.json())
+        .then(sensors => {
+            const sensorSelect = document.getElementById('sensor');
+            const uniqueSensors = [...new Set(sensors.map(sensor => sensor.sensor_id))];
+
+            uniqueSensors.forEach(sensorId => {
+                const option = new Option(sensorId, sensorId);
+                sensorSelect.add(option);
+            });
+        })
+        .catch(error => console.error('Error fetching sensors:', error));
+}
+</script>
+
+
+</body>
+</html>
