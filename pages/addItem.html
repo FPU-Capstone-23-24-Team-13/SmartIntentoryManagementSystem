@@ -117,94 +117,160 @@
             handleFormSubmit(event, form);
         });
     });
-
-    function handleFormSubmit(event, form) {
-      event.preventDefault(); // Prevent default form submission
-      const formData = new FormData(form); // Create FormData object from form data
-
-      const sku = formData.get('SKU');
-      const name = formData.get('SIN');
-      const reorderThreshold = formData.get('reorderThreshold');
-      const count = formData.get('QTY');
-      const storeroomName = formData.get('storeroom');
-      const shelfName = formData.get('selectShelf'); // Assuming shelf is a single select
-      // Check if any fields are empty and log a warning if so
-      if (!sku || !name || !reorderThreshold || !count || !storeroomName || !shelfName) {
-          console.warn('Please fill out all required fields.');
-          return;
-      }
-      console.log(sku)
-        // Check if the selected storeroom and shelf names match any location in the response
-        fetch('/api/location/')
-            .then(response => response.json())
-            .then(locations => {
-                const location = locations.find(location => location.storeroom_name === storeroomName && location.shelf_name === shelfName);
-
-                if (!location) {
-                    console.error('Storeroom or shelf not found');
-                    // Display an error message to the user indicating that the selected storeroom or shelf is not valid
-                    return;
-                }
-
-                const location_id = location.location_id;
-                const data = {
-                    sku: sku,
-                    name: name,
-                    description: "", // Assuming description is not captured in the form
-                    reorder_threshold: reorderThreshold,
-                    count: count,
-                    location_id: location_id
-                };
-
-                // Submit form data with location ID
-                submitFormData(data);
-            })
-            .catch(error => {
-                // Handle errors during location retrieval
-                console.error('Error fetching locations:', error);
-            });
-    }
-
-    function submitFormData(data) {
-        fetch('/api/item/' + data.sku, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
+    function fetchLocationsAndPopulateDropdowns() {
+    fetch('/api/location/')
+        .then(response => response.json())
+        .then(responseData => {
+            if (responseData.code !== 0) {
+                console.error(`Error fetching locations: ${responseData.message}`);
+                return;
             }
-            return response.json();
-        })
-        .then(data => {
-            // Handle successful response (e.g., display confirmation message)
-            console.log('Item sent for creation:', data);
-            // Clear the form fields
-            document.getElementById('contactForm').reset();
 
-            // Display a success message
-            const successMessage = document.createElement('div');
-            successMessage.textContent = 'Item created successfully!';
-            successMessage.style.color = 'green';
-            successMessage.style.fontWeight = 'bold';
-            successMessage.style.marginBottom = '10px';
-            document.getElementById('contactForm').prepend(successMessage);
+            const locations = responseData.data || [];
 
-        // Remove the success message after 3 seconds
-        setTimeout(() => {
-            successMessage.remove();
-        }, 5000);
+            const storeroomSelect = document.getElementById('storeroom');
+            const uniqueStorerooms = [...new Set(locations.map(location => location.storeroom_name))];
+
+            // Clear existing options
+            storeroomSelect.innerHTML = '';
+
+            uniqueStorerooms.forEach(storeroomName => {
+                const option = new Option(storeroomName, storeroomName);
+                storeroomSelect.add(option);
+            });
+
+            // Listen for changes on the storeroom select to update shelves
+            storeroomSelect.addEventListener('change', function() {
+                const selectedStoreroom = this.value;
+                const shelvesForStoreroom = locations.filter(location => location.storeroom_name === selectedStoreroom)
+                                                      .map(location => location.shelf_name);
+                const uniqueShelves = [...new Set(shelvesForStoreroom)]; // Ensure shelves are unique
+
+                const shelfSelect = document.getElementById('selectShelf');
+                shelfSelect.innerHTML = ''; // Clear existing options
+                uniqueShelves.forEach(shelfName => {
+                    const option = new Option(shelfName, shelfName);
+                    shelfSelect.add(option);
+                });
+            });
         })
-        .catch(error => {
-            // Handle errors during submission (e.g., display error message)
-            console.error('Error creating item:', error.message);
+        .catch(error => console.error('Error fetching locations:', error));
+}
+
+function handleFormSubmit(event, form) {
+  event.preventDefault(); // Prevent default form submission
+  const formData = new FormData(form); // Create FormData object from form data
+
+  const sku = formData.get('SKU');
+  const name = formData.get('SIN');
+  const reorderThreshold = formData.get('reorderThreshold');
+  const count = formData.get('QTY');
+  const storeroomName = formData.get('storeroom');
+  const shelfName = formData.get('selectShelf'); // Assuming shelf is a single select
+
+  // Check if any fields are empty and log a warning if so
+  if (!sku || !name || !reorderThreshold || !count || !storeroomName || !shelfName) {
+    console.warn('Please fill out all required fields.');
+    return;
+  }
+
+  console.log(sku);
+
+  // Check if the selected storeroom and shelf names match any location in the response
+  fetch('/api/location/')
+    .then(response => response.json())
+    .then(responseData => {
+      if (responseData.code !== 0) {
+        console.error(`Error fetching locations: ${responseData.message}`);
+        return;
+      }
+
+      const locations = responseData.data;
+      const location = locations.find(location => location.storeroom_name === storeroomName && location.shelf_name === shelfName);
+
+      if (!location) {
+        console.error('Storeroom or shelf not found');
+        // Display an error message to the user indicating that the selected storeroom or shelf is not valid
+        return;
+      }
+
+      const location_id = location.location_id;
+      const data = {
+        sku: sku,
+        name: name,
+        description: "",
+        reorder_threshold: reorderThreshold,
+        count: count,
+        location_id: location_id
+      }
+      console.log(data)
+      // Submit form data with location ID
+      submitFormData(data);
+    })
+    .catch(error => {
+      // Handle errors during location retrieval
+      console.error('Error fetching locations:', error);
+    });
+}
+
+function submitFormData(data) {
+  fetch('/api/item/' + data.sku, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      // Check if the response is valid JSON
+      const contentType = response.headers.get('Content-Type');
+      if (contentType && contentType.includes('application/json')) {
+        return response.json();
+      } else {
+        // Handle non-JSON response
+        return response.text().then(text => {
+          console.error('Error creating item:', text);
+          throw new Error('Invalid response format');
         });
-    }
+      }
+    })
+    .then(responseData => {
+      if (responseData.code !== 0) {
+        console.error(`Error creating item: ${responseData.message}`);
+        return;
+      }
+
+      // Handle successful response (e.g., display confirmation message)
+      console.log('Item sent for creation:', responseData.data);
+      // Clear the form fields
+      document.getElementById('contactForm').reset();
+
+      // Display a success message
+      const successMessage = document.createElement('div');
+      successMessage.textContent = 'Item created successfully!';
+      successMessage.style.color = 'green';
+      successMessage.style.fontWeight = 'bold';
+      successMessage.style.marginBottom = '10px';
+      document.getElementById('contactForm').prepend(successMessage);
+
+      // Remove the success message after 3 seconds
+      setTimeout(() => {
+        successMessage.remove();
+      }, 5000);
+    })
+    .catch(error => {
+      // Handle errors during submission (e.g., display error message)
+      console.error('Error creating item:', error);
+    });
+}
     </script>
 
 
 </body>
 </html>
+
+

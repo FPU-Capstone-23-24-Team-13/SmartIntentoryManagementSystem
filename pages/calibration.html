@@ -106,12 +106,54 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
 fetchLocationsAndPopulateDropdowns();
-fetchSensors();
+fetchSensors()
+            .then(sensorList => {
+                populateDropdowns(sensorList);
+            });
 const form = document.getElementById('contactForm');
 form.addEventListener('submit', function(event) {
     handleFormSubmit(event, form);
 });
 });
+function fetchLocationsAndPopulateDropdowns() {
+    fetch('/api/location/')
+        .then(response => response.json())
+        .then(responseData => {
+            if (responseData.code !== 0) {
+                console.error(`Error fetching locations: ${responseData.message}`);
+                return;
+            }
+
+            const locations = responseData.data || [];
+
+            const storeroomSelect = document.getElementById('storeroom');
+            const uniqueStorerooms = [...new Set(locations.map(location => location.storeroom_name))];
+
+            // Clear existing options
+            storeroomSelect.innerHTML = '';
+
+            uniqueStorerooms.forEach(storeroomName => {
+                const option = new Option(storeroomName, storeroomName);
+                storeroomSelect.add(option);
+            });
+
+            // Listen for changes on the storeroom select to update shelves
+            storeroomSelect.addEventListener('change', function() {
+                const selectedStoreroom = this.value;
+                const shelvesForStoreroom = locations.filter(location => location.storeroom_name === selectedStoreroom)
+                                                      .map(location => location.shelf_name);
+                const uniqueShelves = [...new Set(shelvesForStoreroom)]; // Ensure shelves are unique
+
+                const shelfSelect = document.getElementById('selectShelf');
+                shelfSelect.innerHTML = ''; // Clear existing options
+                uniqueShelves.forEach(shelfName => {
+                    const option = new Option(shelfName, shelfName);
+                    shelfSelect.add(option);
+                });
+            });
+        })
+        .catch(error => console.error('Error fetching locations:', error));
+}
 
 function handleFormSubmit(event, form) {
 event.preventDefault(); // Prevent default form submission
@@ -200,18 +242,29 @@ setTimeout(() => {
 }
 function fetchSensors() {
     console.log("fetch sensors called")
-    fetch('/api/sensor/')
+    return fetch('/api/sensor/')
         .then(response => response.json())
-        .then(sensors => {
-            const sensorSelect = document.getElementById('sensor');
-            const uniqueSensors = [...new Set(sensors.map(sensor => sensor.sensor_id))];
-
-            uniqueSensors.forEach(sensorId => {
-                const option = new Option(sensorId, sensorId);
-                sensorSelect.add(option);
-            });
+        .then(responseData => {
+            if (responseData.code !== 0) {
+                console.error(`Error fetching items: ${responseData.message}`);
+                return [];
+            } else {
+                return responseData.data;
+            }
         })
-        .catch(error => console.error('Error fetching sensors:', error));
+        .catch(error => {
+            console.error('Error fetching items:', error);
+            return [];
+        });
+}
+function populateDropdowns(sensorList) {
+    const sensorSelect = document.getElementById('sensor');
+    const uniqueSensors = [...new Set(sensorList.map(sensor => sensor.sensor_id))];
+
+    uniqueSensors.forEach(sensorId => {
+        const option = new Option(sensorId, sensorId);
+        sensorSelect.add(option);
+    });
 }
 </script>
 

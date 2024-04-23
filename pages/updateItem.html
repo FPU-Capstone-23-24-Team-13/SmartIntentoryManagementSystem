@@ -117,6 +117,45 @@
             handleFormSubmit(event, form);
         });
     });
+    function fetchLocationsAndPopulateDropdowns() {
+    fetch('/api/location/')
+        .then(response => response.json())
+        .then(responseData => {
+            if (responseData.code !== 0) {
+                console.error(`Error fetching locations: ${responseData.message}`);
+                return;
+            }
+
+            const locations = responseData.data || [];
+
+            const storeroomSelect = document.getElementById('storeroom');
+            const uniqueStorerooms = [...new Set(locations.map(location => location.storeroom_name))];
+
+            // Clear existing options
+            storeroomSelect.innerHTML = '';
+
+            uniqueStorerooms.forEach(storeroomName => {
+                const option = new Option(storeroomName, storeroomName);
+                storeroomSelect.add(option);
+            });
+
+            // Listen for changes on the storeroom select to update shelves
+            storeroomSelect.addEventListener('change', function() {
+                const selectedStoreroom = this.value;
+                const shelvesForStoreroom = locations.filter(location => location.storeroom_name === selectedStoreroom)
+                                                      .map(location => location.shelf_name);
+                const uniqueShelves = [...new Set(shelvesForStoreroom)]; // Ensure shelves are unique
+
+                const shelfSelect = document.getElementById('selectShelf');
+                shelfSelect.innerHTML = ''; // Clear existing options
+                uniqueShelves.forEach(shelfName => {
+                    const option = new Option(shelfName, shelfName);
+                    shelfSelect.add(option);
+                });
+            });
+        })
+        .catch(error => console.error('Error fetching locations:', error));
+}
 
     function handleFormSubmit(event, form) {
       event.preventDefault(); // Prevent default form submission
@@ -148,8 +187,13 @@
           } else {
               // Check if the selected storeroom and shelf names match any location in the response
               fetch('/api/location/')
-                  .then(response => response.json())
-                  .then(locations => {
+                    .then(response => response.json())
+                    .then(responseData => {
+                        if (responseData.code !== 0) {
+                            console.error(`Error fetching locations: ${responseData.message}`);
+                            return;
+                    }
+                      const locations = responseData.data || [];
                       const location = locations.find(location => location.storeroom_name === storeroomName && location.shelf_name === shelfName);
                       const location_id = location?.location_id ?? null;
                       const data = {};
@@ -214,3 +258,4 @@
 
 </body>
 </html>
+

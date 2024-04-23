@@ -71,11 +71,11 @@
             <div class="col-md-6">
                 <div class="form-group">
                     <!-- Search SKU input-->
-                    <input class="form-control" id="SKU" type="text" placeholder="Search SKU" name="SKU" />
+                    <input class="form-control" id="SKU" type="text" placeholder="Search SKU" name="sku" />
                 </div>
                 <div class="form-group">
                     <!-- Search Item Name-->
-                    <input class="form-control" id="SIN" type="text" placeholder="Search Item Name" name="SIN" />
+                    <input class="form-control" id="SIN" type="text" placeholder="Search Item Name" name="name" />
                 </div>
                 <div class="form-group mb-md-0">
                     <!-- Shelf-->
@@ -140,86 +140,130 @@
     <script src="../scripts/scripts.js"></script>
     <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
 	<script>
-        let lastSearchParams = {}; // Store the last search parameters
-        let existingRowsMap = new Map(); // Map to store existing rows by SKU
+    let lastSearchParams = {}; // Store the last search parameters
+    let existingRowsMap = new Map(); // Map to store existing rows by SKU
 
-        document.addEventListener('DOMContentLoaded', function() {
-            fetchLocationsAndPopulateDropdowns();
-            const form = document.getElementById('contactForm');
-            form.addEventListener('submit', function(event) {
-                event.preventDefault(); // Prevent default form submission
-                handleFormSubmit(event, form);
-            });
-
-            // Refresh data every 1.5 seconds
-            setInterval(refreshData, 1500);
+    document.addEventListener('DOMContentLoaded', function() {
+        fetchLocationsAndPopulateDropdowns();
+        const form = document.getElementById('contactForm');
+        form.addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent default form submission
+            handleFormSubmit(event, form);
         });
 
-        function handleFormSubmit(event, form) {
-            const formData = new FormData(form); // Create FormData object from form data
-            const params = {};
-            formData.forEach((value, key) => {
-                params[key] = value;
+        // Refresh data every 1.5 seconds
+        setInterval(refreshData, 1500);
+    });
+    function fetchLocationsAndPopulateDropdowns() {
+    fetch('/api/location/')
+        .then(response => response.json())
+        .then(responseData => {
+            if (responseData.code !== 0) {
+                console.error(`Error fetching locations: ${responseData.message}`);
+                return;
+            }
+
+            const locations = responseData.data || [];
+
+            const storeroomSelect = document.getElementById('storeroom');
+            const uniqueStorerooms = [...new Set(locations.map(location => location.storeroom_name))];
+
+            // Clear existing options
+            storeroomSelect.innerHTML = '';
+
+            uniqueStorerooms.forEach(storeroomName => {
+                const option = new Option(storeroomName, storeroomName);
+                storeroomSelect.add(option);
             });
 
-            // Check the state of the filter checkbox
-            const filterCheckbox = document.getElementById('filterCheckbox');
-            const filterChecked = filterCheckbox.checked;
-            if (filterChecked) params.filter_count_reorder = filterChecked;
+            // Listen for changes on the storeroom select to update shelves
+            storeroomSelect.addEventListener('change', function() {
+                const selectedStoreroom = this.value;
+                const shelvesForStoreroom = locations.filter(location => location.storeroom_name === selectedStoreroom)
+                                                      .map(location => location.shelf_name);
+                const uniqueShelves = [...new Set(shelvesForStoreroom)]; // Ensure shelves are unique
 
-            lastSearchParams = params; // Store the search parameters
-            submitFormData(params)
-                .then(itemList => {
-                    updateDataRows(itemList);
+                const shelfSelect = document.getElementById('selectShelf');
+                shelfSelect.innerHTML = ''; // Clear existing options
+                uniqueShelves.forEach(shelfName => {
+                    const option = new Option(shelfName, shelfName);
+                    shelfSelect.add(option);
                 });
-        }
+            });
+        })
+        .catch(error => console.error('Error fetching locations:', error));
+}
 
-        function submitFormData(params = {}) {
-            let url = '/api/item/';
-            let queryParams = new URLSearchParams(params).toString();
-            if (queryParams) {
-                url += '?' + queryParams;
-            }
-            return fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.length === 0) {
-                        console.error('No items found');
-                        return [];
-                    } else {
-                        return data;
-                    }
-                })
-                .catch(error => {
-                    console.error('Error checking item existence:', error);
+    function handleFormSubmit(event, form) {
+        const formData = new FormData(form); // Create FormData object from form data
+        const params = {};
+        formData.forEach((value, key) => {
+            params[key] = value;
+        });
+
+        // Check the state of the filter checkbox
+        const filterCheckbox = document.getElementById('filterCheckbox');
+        const filterChecked = filterCheckbox.checked;
+        if (filterChecked) params.filter_count_reorder = filterChecked;
+
+        lastSearchParams = params; // Store the search parameters
+        submitFormData(params)
+            .then(itemList => {
+                updateDataRows(itemList);
+            });
+    }
+
+    function submitFormData(params = {}) {
+        let url = '/api/item/';
+        let queryParams = new URLSearchParams(params).toString();
+        if (queryParams) {
+            url += '?' + queryParams;
+        }
+        return fetch(url)
+            .then(response => response.json())
+            .then(responseData => {
+                if (responseData.code !== 0) {
+                    console.error(`Error fetching items: ${responseData.message}`);
                     return [];
-                });
-        }
+                } else {
+                    return responseData.data;
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching items:', error);
+                return [];
+            });
+    }
 
-        function refreshData() {
-            submitFormData(lastSearchParams)
-                .then(itemList => {
-                    updateDataRows(itemList);
-                })
-                .catch(error => {
-                    console.error('Error refreshing data:', error);
-                });
-        }
+    function refreshData() {
+        submitFormData(lastSearchParams)
+            .then(itemList => {
+                updateDataRows(itemList);
+            })
+            .catch(error => {
+                console.error('Error refreshing data:', error);
+            });
+    }
 
-        function updateDataRows(itemList) {
-            const tableBody = document.getElementById('tableBody');
+    function updateDataRows(itemList) {
+        const tableBody = document.getElementById('tableBody');
 
-            // Sort the itemList based on SKU (in ascending order)
-            itemList.sort((a, b) => a.sku.localeCompare(b.sku));
+        // Sort the itemList based on SKU (in ascending order)
+        itemList.sort((a, b) => a.sku.localeCompare(b.sku));
 
-            itemList.forEach(itemData => {
-                const sku = itemData.sku;
+        itemList.forEach(itemData => {
+            const sku = itemData.sku;
 
-                if (!existingRowsMap.has(sku)) {
-                    // New row, create and append
-                    fetch(`/api/item/${sku}`)
+            if (!existingRowsMap.has(sku)) {
+                // New row, create and append
+                fetch(`/api/item/${sku}`)
                     .then(response => response.json())
-                    .then(itemDetails => {
+                    .then(responseData => {
+                        if (responseData.code !== 0) {
+                            console.error(`Error fetching item data for SKU ${sku}: ${responseData.message}`);
+                            return;
+                        }
+                        const itemDetails = responseData.data;
                         const newRow = createRow(itemDetails);
                         const insertIndex = getInsertIndex(tableBody.rows, sku);
                         tableBody.insertBefore(newRow, tableBody.rows[insertIndex]);
@@ -228,74 +272,81 @@
                     .catch(error => {
                         console.error(`Error fetching item data for SKU ${sku}:`, error);
                     });
-                } else {
-                    // Existing row, update
-                    const row = existingRowsMap.get(sku);
-                    fetch(`/api/item/${sku}`)
-                        .then(response => response.json())
-                        .then(itemDetails => {
-                            updateRow(row, itemDetails);
-                        })
-                        .catch(error => {
-                            console.error(`Error fetching item data for SKU ${sku}:`, error);
-                        });
-                }
-            });
-
-            // Remove rows for SKUs that no longer exist
-            const skusToRemove = Array.from(existingRowsMap.keys()).filter(sku => !itemList.some(item => item.sku === sku));
-            skusToRemove.forEach(sku => {
-                const rowToRemove = existingRowsMap.get(sku);
-                tableBody.removeChild(rowToRemove);
-                existingRowsMap.delete(sku);
-            });
-        }
-        function getInsertIndex(rows, sku) {
-            const skus = Array.from(rows).map(row => row.cells[0].textContent);
-            for (let i = 0; i < skus.length; i++) {
-                if (sku.localeCompare(skus[i]) < 0) {
-                    return i;
-                }
+            } else {
+                // Existing row, update
+                const row = existingRowsMap.get(sku);
+                fetch(`/api/item/${sku}`)
+                    .then(response => response.json())
+                    .then(responseData => {
+                        if (responseData.code !== 0) {
+                            console.error(`Error fetching item data for SKU ${sku}: ${responseData.message}`);
+                            return;
+                        }
+                        const itemDetails = responseData.data;
+                        updateRow(row, itemDetails);
+                    })
+                    .catch(error => {
+                        console.error(`Error fetching item data for SKU ${sku}:`, error);
+                    });
             }
-            return skus.length;
+        });
+
+        // Remove rows for SKUs that no longer exist
+        const skusToRemove = Array.from(existingRowsMap.keys()).filter(sku => !itemList.some(item => item.sku === sku));
+        skusToRemove.forEach(sku => {
+            const rowToRemove = existingRowsMap.get(sku);
+            tableBody.removeChild(rowToRemove);
+            existingRowsMap.delete(sku);
+        });
+    }
+
+    function getInsertIndex(rows, sku) {
+        const skus = Array.from(rows).map(row => row.cells[0].textContent);
+        for (let i = 0; i < skus.length; i++) {
+            if (sku.localeCompare(skus[i]) < 0) {
+                return i;
+            }
         }
-        function createRow(itemData) {
-            const row = document.createElement('tr');
-            const skuCell = document.createElement('td');
-            skuCell.textContent = itemData.sku;
-            row.appendChild(skuCell);
+        return skus.length;
+    }
 
-            const nameCell = document.createElement('td');
-            nameCell.textContent = itemData.name;
-            row.appendChild(nameCell);
+    function createRow(itemData) {
+        const row = document.createElement('tr');
+        const skuCell = document.createElement('td');
+        skuCell.textContent = itemData.sku;
+        row.appendChild(skuCell);
 
-            const quantityCell = document.createElement('td');
-            quantityCell.textContent = itemData.count;
-            row.appendChild(quantityCell);
+        const nameCell = document.createElement('td');
+        nameCell.textContent = itemData.name;
+        row.appendChild(nameCell);
 
-            const thresholdCell = document.createElement('td');
-            thresholdCell.textContent = itemData.reorder_threshold;
-            row.appendChild(thresholdCell);
+        const quantityCell = document.createElement('td');
+        quantityCell.textContent = itemData.count;
+        row.appendChild(quantityCell);
 
-            const storeroomCell = document.createElement('td');
-            storeroomCell.textContent = itemData.storeroom_name;
-            row.appendChild(storeroomCell);
+        const thresholdCell = document.createElement('td');
+        thresholdCell.textContent = itemData.reorder_threshold;
+        row.appendChild(thresholdCell);
 
-            const shelfnameCell = document.createElement('td');
-            shelfnameCell.textContent = itemData.shelf_name;
-            row.appendChild(shelfnameCell);
+        const storeroomCell = document.createElement('td');
+        storeroomCell.textContent = itemData.storeroom_name;
+        row.appendChild(storeroomCell);
 
-            return row;
-        }
+        const shelfnameCell = document.createElement('td');
+        shelfnameCell.textContent = itemData.shelf_name;
+        row.appendChild(shelfnameCell);
 
-        function updateRow(row, itemData) {
-            row.cells[1].textContent = itemData.name;
-            row.cells[2].textContent = itemData.count;
-            row.cells[3].textContent = itemData.reorder_threshold;
-            row.cells[4].textContent = itemData.storeroom_name;
-            row.cells[5].textContent = itemData.shelf_name;
-        }
-    </script>
+        return row;
+    }
+
+    function updateRow(row, itemData) {
+        row.cells[1].textContent = itemData.name;
+        row.cells[2].textContent = itemData.count;
+        row.cells[3].textContent = itemData.reorder_threshold;
+        row.cells[4].textContent = itemData.storeroom_name;
+        row.cells[5].textContent = itemData.shelf_name;
+    }
+</script>
 
 
     <!-- Melia JS -->
@@ -321,3 +372,5 @@
 
   </body>
 </html>
+
+
